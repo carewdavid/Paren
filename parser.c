@@ -1,21 +1,29 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include "token.h"
 #include "instruction.h"
+#include "util/vector.h"
 
-static struct token *tokens;
+static struct Vector *program_tokens;
+
+static bool at_end(){
+  return program_tokens->len == 0;
+}
+  
+
 
 static struct token *peek(){
-  if(tokens){
-    return tokens;
+  if(!at_end()){
+    return vec_get(program_tokens, 0);
   }else{
     return NULL;
+  }
 }
 
 
 static struct token *next_token(){
-  if(tokens){
-    struct token *token = tokens;
-    tokens++;
+  if(!at_end()){
+    struct token *token = vec_remove(program_tokens, 0);
     return token;
   }else{
     return NULL;
@@ -39,16 +47,28 @@ static int nesting(){
   return level - 1;
 }
   
-instruction instruction(){
+instruction instr(){
   instruction instruction = malloc(sizeof(*instruction));
   instruction->start = *peek();
   instruction->opcode = nesting();
+  int i = 0;
   while(peek()->type != RPAREN){
-    //get arg
+    instruction->args[i] = nesting();
+    i++;
+  }
+  //Fill unused slots in the arguments array with -1 to mark that they are empty, since there is no way to directly express negative numbers
+  for(; i < 3; i++){
+    instruction->args[i] = -1;
   }
   next_token();
   return instruction;
 }
 
 
+struct Vector *parse(struct token *tokens){
+  program_tokens = tokens;
+  struct Vector *program = vec_create(10, sizeof(instruction));
+  while(
+
   
+ }
