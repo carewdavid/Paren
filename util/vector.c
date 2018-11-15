@@ -24,6 +24,11 @@ static struct Vector *grow_vector(struct Vector *vec){
   return vec;
 }
 
+static void *vec_access(struct Vector *vec, size_t index){
+  char *buf = vec->data;
+  return buf + (vec->element_size * index);
+}
+
 //Set index `index` in the vector to item, reallocating if necessary
 void vec_set(struct Vector *vec, const void *const item, const size_t index){
   assert(vec);
@@ -46,6 +51,8 @@ void *vec_get(struct Vector *vec, size_t const index){
   assert(vec);
   assert(index >= 0);
   assert(index < vec->len);
-  char *buf = vec->data;
-  return buf + (vec->element_size * index);
+  void *buf = vec_access(vec, index);
+  void *data = malloc(vec->element_size);
+  memcpy(data, buf, vec->element_size);
+  return data;
 }
