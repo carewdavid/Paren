@@ -30,10 +30,7 @@ void vec_set(struct Vector *vec, const void *const item, const size_t index){
   if(vec->len == vec->capacity){
     vec = grow_vector(vec);
   }
-  char *buf = vec->data;
-  for(size_t i = 0; i < vec->element_size; i++){
-    buf[(vec->element_size * index) + i] = *((char *)item + i);
-  }
+  memcpy(vec->data, item, vec->element_size);
 }
 
 
