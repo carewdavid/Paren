@@ -5,9 +5,9 @@
 #include "instruction.h"
 
 static struct token *tokens;
+static struct token nil = {0};
 
 static int at_end(){
-  static struct token nil = {0};
   //Tokens should be null terminated.
   return memcmp(&nil, tokens, sizeof(struct token));
 }
