@@ -1,19 +1,28 @@
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include "token.h"
 #include "instruction.h"
 
 static struct token *tokens;
 
+static int at_end(){
+  static struct token nil = {0};
+  //Tokens should be null terminated.
+  return memcmp(&nil, tokens, sizeof(struct token));
+}
+
 static struct token *peek(){
-  if(tokens){
+  if(!at_end()){
     return tokens;
   }else{
     return NULL;
+  }
 }
 
 
 static struct token *next_token(){
-  if(tokens){
+  if(!at_end()){
     struct token *token = tokens;
     tokens++;
     return token;
@@ -39,7 +48,7 @@ static int nesting(){
   return level - 1;
 }
   
-instruction instruction(){
+instruction instr(){
   instruction instruction = malloc(sizeof(*instruction));
   instruction->start = *peek();
   instruction->opcode = nesting();
