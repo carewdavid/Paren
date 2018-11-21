@@ -59,5 +59,23 @@ void instr(struct instruction *instruction){
   next_token();
 }
 
+static size_t prog_len(struct token *program){
+  size_t len = 0;
+  while(memcmp(&nil, program, sizeof(struct token))){
+    len++;
+    program++;
+  }
+  return len;
+}
 
-  
+struct instruction *parse(struct token *program){
+  size_t program_length = prog_len(program) / 2;
+  struct instruction *instrs = malloc(sizeof(struct instruction) * program_length);
+  memset(instrs, 0, program_length);
+  size_t i = 0;
+  while(!at_end()){
+    instr(instrs + i);
+  }
+  return instrs;
+}
+
