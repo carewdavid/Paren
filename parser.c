@@ -48,15 +48,15 @@ static int nesting(){
   return level - 1;
 }
   
-instruction instr(){
-  instruction instruction = malloc(sizeof(*instruction));
+void instr(struct instruction *instruction){
   instruction->start = *peek();
   instruction->opcode = nesting();
+  int i = 0;
   while(peek()->type != RPAREN){
-    //get arg
+    instruction->args[i] = nesting();
+    i++;
   }
   next_token();
-  return instruction;
 }
 
 
