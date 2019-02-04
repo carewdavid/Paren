@@ -1,74 +1,62 @@
 #include <stdlib.h>
-#include <stdbool.h>
-#include "token.h"
-#include "instruction.h"
-#include "util/vector.h"
 
-static struct Vector *program_tokens;
+char *code;
 
-static bool at_end(){
-  return program_tokens->len == 0;
+static char peek(){
+  return *code;
 }
-  
+static char advance(){
+  char next = *code;
+  code++;
+  return next;
+}
 
+static char atEnd(){
+  return *code == '\0';
+}
 
-static struct token *peek(){
-  if(!at_end()){
-    return vec_get(program_tokens, 0);
-  }else{
-    return NULL;
+static void skip(void){
+  while(!atEnd() || peek() == '('){
+    advance();
   }
 }
 
+static int instruction(){
+  skip();
+  advance();
+  int depth = 0;
+  int max = 0;
 
-static struct token *next_token(){
-  if(!at_end()){
-    struct token *token = vec_remove(program_tokens, 0);
-    return token;
-  }else{
-    return NULL;
+  if(atEnd()){
+    return -1;
   }
-}
 
-static int nesting(){
-  int level = 0;
-  int nesting = 1;
-  struct token *current = next_token();
-  while(nesting > 0){
-    if(current->type == LPAREN){
-    level++;
-    nesting++;
+  while(peek() != ')' && depth != 0){
+    char c = advance();
+    if(c == '('){
+      depth++;
+      max = depth > max ? depth : max;
+    }else if(c == ')'){
+      depth--;
+    }else if(atEnd()){ //i.e. c == '\0'
+      error("Reached end of file without matching ')'.");
+      return -1;
     }
-    if(current->type == RPAREN){
-      nesting--;
-    }
-    current = next_token();
+    return max;
   }
-  return level - 1;
 }
   
-instruction instr(){
-  instruction instruction = malloc(sizeof(*instruction));
-  instruction->start = *peek();
-  instruction->opcode = nesting();
-  int i = 0;
-  while(peek()->type != RPAREN){
-    instruction->args[i] = nesting();
-    i++;
+int *parse(char *source){
+  code = source;
+  size_t len = strlen(source) / 2 + 1;
+  int *code = malloc(len * sizeof(int));
+  for(size_t i = 0; i < len; i++){
+    int instr = intruction();
+    code[i] = instr;
+    if(instr < 0) break;
   }
-  //Fill unused slots in the arguments array with -1 to mark that they are empty, since there is no way to directly express negative numbers
-  for(; i < 3; i++){
-    instruction->args[i] = -1;
-  }
-  next_token();
-  return instruction;
+  return code;
 }
 
-
-struct Vector *parse(struct token *tokens){
-  program_tokens = tokens;
-  struct Vector *program = vec_create(10, sizeof(instruction));
-  while(
-
   
- }
+
