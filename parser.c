@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#include <string.h>
+
+#include "error.h"
 
 char *code;
 
@@ -42,8 +45,8 @@ static int instruction(){
       error("Reached end of file without matching ')'.");
       return -1;
     }
-    return max;
   }
+  return max;
 }
   
 int *parse(char *source){
@@ -51,7 +54,7 @@ int *parse(char *source){
   size_t len = strlen(source) / 2 + 1;
   int *code = malloc(len * sizeof(int));
   for(size_t i = 0; i < len; i++){
-    int instr = intruction();
+    int instr = instruction();
     code[i] = instr;
     if(instr < 0) break;
   }
