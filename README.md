@@ -5,7 +5,7 @@ Paren is an esoteric programming language whose syntax consists entirely of pair
 
 ## Syntax
 
-A Paren program is a series of instructions each contained within a pair of parentheses.  Each instruction contains an opcode number, possibly followed by several arguments. e.g. `((...)[(...)...])(...)...`.
+A Paren program is a series of instructions each contained within a pair of parentheses.  Each instruction represents an opcode number.
 
 Numbers are written by nesting parentheses. 0 is `()`, 1 is `(())`. For convenience, documentation will use the notation `(x)` as a shorthand.
 
@@ -32,32 +32,29 @@ The following table contains the opcodes in Paren:
 | 0x0E | Call     |
 | 0x0F | Ret      |
 
-### Exit
-**Syntax:** `((0))`
-**Behavior:** halts execution of the program.
 ### Push
-**Syntax:** `((1)(x))`
-**Behavior:** push `x` onto the stack.
+**Syntax:** `()`
+**Behavior:** push the value of the next instruction onto the stack.
 
 ### Add
-**Syntx:** `((2)[(x)[(y)]])`
-**Behavior:** with zero arguments, pops the top two elements of the stack, adds them, and pushes the result; with one, pops the top value of the stack, adds x, and pushes the result; with two, computes `x + y` and pushes it onto the stack.
+**Syntx:** `(())`
+**Behavior:** pops the top two elements of the stack, adds them, and pushes the result.
 
 ### Subtract
-**Syntax:** `((3)[(x)[(y)]])`
-**Behavior:** with zero arguments, pops the top two elements of the stack, subtracts them, and pushes the result; with one, pops the top value of the stack, subtracts x, and pushes the result; with two, computes `x - y` and pushes it onto the stack.
+**Syntax:** `((()))`
+**Behavior:** pops the top two elements of the stack, subtracts them, and pushes the result.
 
 ### Multiply
-**Syntax:** `((4)[(x)[(y)]])`
-**Behavior:** with zero arguments, pops the top two elements of the stack, multiplies them, and pushes the result; with one, pops the top value of the stack, multiplies by x, and pushes the result; with two, computes `x * y` and pushes it onto the stack.
+**Syntax:** `((3))`
+**Behavior:** pops the top two elements of the stack, multiplies them, and pushes the result.
 
 ### Divide
-**Syntax:** `((5)[(x)[(y)]])`
-**Behavior:** with zero arguments, pops the top two elements of the stack, divides them, and pushes the result; with one, pops the top value of the stack, divides by x, and pushes the result; with two, computes `x / y` and pushes it onto the stack. Note: Always performs integer division.
+**Syntax:** `((4))`
+**Behavior:** pops the top two elements of the stack, divides them, and pushes the result.
 
 ### Compare
-**Syntax:** `((6)(c)[(x)[(y)]])`
-**Behavior:** compares numbers. The first argument determines the type of comparison:
+**Syntax:** `((5))`
+**Behavior:** Pops the top three items of the stack. The first argument determines the type of comparison:
 | c | operation |
 |---|-----------|
 | 0 | ==        |
@@ -66,20 +63,23 @@ The following table contains the opcodes in Paren:
 | 3 | <=        |
 | 4 | >         |
 | 5 | >=        |
-
-The optional arguments are as with arithmetic: with none, compares the two top values on the stack; with one compares the argument to the top of the stack; with two compares its argument and pushes result. `0` indicates false; all other values are truthy.
+The result is pushed. `0` is false, all other values are true
 
 ### Load
-**Syntax:** `((7)[(x)])`
-**Behavior:** with no arguments, pops the top element of the stack and pushes the value in memory at that address. With an argument, pushes the value ad address x.
+**Syntax:** `((6))`
+**Behavior:** pops the top element of the stack and pushes the value in memory at that address.
 
 ### Store
-**Syntax:** `((8)[(x)[(y)]])`
-**Behavior:** With no arguments, pops the top value off the stack and sets the address it points to to the next value on the stack (which is also popped). If `x` is
+**Syntax:** `((7))`
+**Behavior:** With no arguments, pops the top value off the stack and sets the address it points to to the next value on the stack (which is also popped).
 
-### I/O
-**Syntax:** `((9)(d)(t))`
-**Behavior:* if d is `0` read from standard in and pushes it onto the stack, if it is `1` pop the top of the stack and write it to standard out. If `t` is `0` operates on a character value, if it is `1` an integer.
+### Read 
+**Syntax:** `((8))`
+**Behavior:** reads a character from standard in and pushes it to the stack
+
+### Write
+**Syntax:** `((9))`
+**Behavior:** pops the top of the stack and writes it to standard out.
 
 ### Dup
 **Syntax:** `((10))`
@@ -94,13 +94,13 @@ The optional arguments are as with arithmetic: with none, compares the two top v
 **Behavior:** pops the top item from the stack.
 
 ### Goto
-**Syntax:** `((13)(x)[(d)])`
-**Behavior:** Pops the top of the stack; if it is true jumps according to its arguments, otherwise falls through to the next instruction. With no optional arguments, jumps to instruction `x`; if d is `1`, jumps to `current instruction + x`; if `d` is `2`, jumps to  `current instruction - x`.
+**Syntax:** `((13))`
+**Behavior:** Pops the top of the stack; if it is true pops the next value and jumps to that address.
 
 ### Call
-**Syntax:** `((14)(x)[(d)])`
-**Behavior:** With no optional arguments, jumps to instruction `x`; if d is `1`, jumps to `current instruction + x`; if `d` is `2`, jumps to  `current instruction - x`. Pushes address of next instruction to the stack before jumping.
+**Syntax:** `((14))`
+**Behavior:** pops the top of the stack, pushes the address of the current instruction, and jumps to the address that was popped.
 
-### Ret
+### Exit
 **Syntax:** `((15))`
-**Behavior:** Pops the top value off the stack and jumps to the instruction it points to.
+**Behavior:** halts execution of the program.
