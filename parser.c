@@ -34,7 +34,7 @@ static int instruction(){
     return -1;
   }
 
-  while(peek() != ')' && depth != 0){
+  while(peek() != ')' || depth != 0){
     char c = advance();
     if(c == '('){
       depth++;
