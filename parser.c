@@ -19,7 +19,7 @@ static char atEnd(){
 }
 
 static void skip(void){
-  while(!atEnd() || peek() == '('){
+  while(!atEnd() && peek() != '('){
     advance();
   }
 }
