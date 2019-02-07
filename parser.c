@@ -50,10 +50,14 @@ static int instruction(){
 }
   
 int *parse(char *source){
-  size_t len = strlen(source) / 2 + 1;
-  int *code = malloc(len * sizeof(int));
-  for(size_t i = 0; i < len; i++){
   source_code = source;
+  size_t len = strlen(source);
+  if(len == 0){
+    return NULL;
+  }
+  size_t code_len = len / 2 + 1;
+  int *code = malloc(code_len * sizeof(int));
+  for(size_t i = 0; i < code_len; i++){
     int instr = instruction();
     code[i] = instr;
     if(instr < 0) break;
