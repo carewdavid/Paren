@@ -5,3 +5,6 @@ sudo: false
 os:
   -linux
   -osx
+
+script:
+  - make test
