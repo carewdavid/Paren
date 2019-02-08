@@ -7,7 +7,7 @@ paren: paren.o parser.o error.o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-test: test.o parser.o
+test: test.o parser.o error.o
 	$(CC) $(CFLAGS) $^ -o parenTest; \
 	./parenTest
 
