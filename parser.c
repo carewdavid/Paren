@@ -5,17 +5,22 @@
 
 char *source_code;
 
+static char atEnd(){
+  return *source_code == '\0';
+}
+
 static char peek(){
   return *source_code;
 }
-static char advance(){
-  char next = *source_code;
-  source_code++;
-  return next;
-}
 
-static char atEnd(){
-  return *source_code == '\0';
+static char advance(){
+  if(!atEnd()){
+    char next = *source_code;
+    source_code++;
+    return next;
+  }else{
+    return '\0';
+  }
 }
 
 static void skip(void){
@@ -25,6 +30,7 @@ static void skip(void){
 }
 
 static int instruction(){
+
   skip();
   advance();
   int depth = 0;
@@ -33,6 +39,7 @@ static int instruction(){
   if(atEnd()){
     return -1;
   }
+
 
   while(peek() != ')' || depth != 0){
     char c = advance();
@@ -57,11 +64,15 @@ int *parse(char *source){
   }
   size_t code_len = len / 2 + 1;
   int *code = malloc(code_len * sizeof(int));
-  for(size_t i = 0; i < code_len; i++){
+  size_t i;
+  for(i = 0; i < code_len; i++){
     int instr = instruction();
     code[i] = instr;
     if(instr < 0) break;
   }
+  code[i] = -1;
+
+
   return code;
 }
 
