@@ -1,15 +1,16 @@
 #Include <stdlib.h>
 #include <stdio.h>
-#include "token.h"
 #include "instruction.h"
 
 #define DEFAULT_STACK_SIZE 1000
 #define DEFAULT_MEMORY_SIZE 1000
 
-static struct Stack {
+typedef struct {
   size_t top;
   int *data;
-} stack;
+} Stack;
+
+static Stack stack;
 
 static int memory[DEFAULT_MEMORY_SIZE];
 
@@ -29,86 +30,65 @@ static void init_stack(){
   stack.data = malloc(sizeof(int) * DEFAULT_STACK_SIZE);
 }
 
-int math(enum opcodes op, int args[3]){
-  int left;
-  int right;
-  if(args[0] == 0){
-    right = pop();
-    left = pop();
-  }else if(args[1] == 0){
-    left = pop();
-    right = args[0];
-  }else{
-    left = args[0];
-    right = args[1];
-  }
-
-  if(op == ADD){
-    return left + right;
-  }else if(op == SUB){
-    return left - right;
-  }else if(op == MUL){
-    return left * right;
-  }else{
-    return left / right;
-  }
-}
-
-int compare(int args[3]){
-  int left;
-  int right;
-
-  if(args[1] == 0){
-    right = pop();
-    left = pop();
-  }else if(args[2] == 0){
-    left = pop();
-    right = args[1];
-  }else{
-    left = args[1];
-    right = args[2];
-  }
-
-  switch(args[0]){
-  case 1:
-    return left == right;
-  case 2:
-    return left != right;
-  case 3:
-    return left < right;
-  case 4:
-    return left <= right;
-  case 5:
-    return left > right;
-  case 6:
-    return left >= right;
-  default:
-    fprintf(stderr, "Unknown comparison code %d.\n", args[0]);
-    exit(1);
-  }
-}
-
-int run(struct instruction *program){
+  
+int run(int *program){
   size_t pc = 0;
   init_stack();
 
-  while(1){
+#define BINOP(op) do { \
+    int left = pop(); \
+    int right = pop(); \
+    push(left op right); \
+  } while(0);
+
+  while(program[pc] != -1){
     struct instruction inst = program[pc];
     switch(inst.opcode){
     case PUSH: {
       push(inst.args[0]);
       break;
     }
-    case ADD: 
-    case SUB:
-    case MUL:
-    case DIV: {
-      push(math(inst.opcode, inst.args));
+    case ADD: {
+      BINOP(+);
       break;
     }
-    case CMP:
-      push(compare(inst.args));
-	   break;
+    case SUB: {
+      BINOP(-);
+      break;
+    }
+    case MUL: {
+      BINOP(*);
+      break;
+    }
+    case DIV: {
+      BINOP(/);
+      break;
+    }
+    case CMP: {
+      int op = pop();
+      switch(op){
+      case 0:
+	BINOP(==);
+	break;
+      case 1:
+	BINOP(!=);
+	break;
+      case 2:
+	BINOP(<);
+	break;
+      case 3:
+	BINOP(<=);
+	break;
+      case 4:
+	BINOP(>);
+	break;
+      case 5:
+	BINOP(>=);
+	break;
+      default:
+	error("Invalid comparison");
+      }
+	  
     case LD: {
       int addr = 0;
       if(inst.args[0] == 0){
