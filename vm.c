@@ -96,18 +96,8 @@ int run(int *program){
       break;
     }
     case OP_STORE: {
-      int addr = 0;
-      int val = 0;
-      if(inst.args[0] == 0){
-	addr = pop();
-      }else{
-	addr = inst.args[0];
-      }
-      if(inst.args[1] == 0){
-	val = pop();
-      }else{
-	val = inst.args[1];
-      }
+      int addr = pop();
+      int val = pop();
       memory[addr] = val;
       break;
     }
