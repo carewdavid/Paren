@@ -91,12 +91,7 @@ int run(int *program){
     }
 	  
     case OP_LOAD: {
-      int addr = 0;
-      if(inst.args[0] == 0){
-	addr = pop();
-      }else{
-	addr = inst.args[0];
-      }
+      int addr = pop();
       push(memory[addr]);
       break;
     }
