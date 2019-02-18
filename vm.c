@@ -48,23 +48,23 @@ int run(int *program){
       push(inst.args[0]);
       break;
     }
-    case ADD: {
+    case OP_ADD: {
       BINOP(+);
       break;
     }
-    case SUB: {
+    case OP_SUB: {
       BINOP(-);
       break;
     }
-    case MUL: {
+    case OP_MUL: {
       BINOP(*);
       break;
     }
-    case DIV: {
+    case OP_DIV: {
       BINOP(/);
       break;
     }
-    case CMP: {
+    case OP_CMP: {
       int op = pop();
       switch(op){
       case 0:
@@ -88,8 +88,9 @@ int run(int *program){
       default:
 	error("Invalid comparison");
       }
+    }
 	  
-    case LD: {
+    case OP_LOAD: {
       int addr = 0;
       if(inst.args[0] == 0){
 	addr = pop();
@@ -99,7 +100,7 @@ int run(int *program){
       push(memory[addr]);
       break;
     }
-    case STO: {
+    case OP_STORE: {
       int addr = 0;
       int val = 0;
       if(inst.args[0] == 0){
@@ -115,29 +116,32 @@ int run(int *program){
       memory[addr] = val;
       break;
     }
-    case IO: {
+    case OP_READ: {
       if(inst.args[0] == 1){
 	int chr = getchar();
-	
-      
-    case DUP: {
+      }
+      break;
+    }
+    case OP_WRITE:{}
+
+    case OP_DUP: {
       int temp = pop();
       push(temp);
       push(temp);
       break;
     }
-    case SWP: {
+    case OP_SWAP: {
       int temp = pop();
       int temp2 = pop();
       push(temp);
       push(temp2);
       break;
     }
-    case DRP: {
+    case OP_DROP: {
       pop();
       break;
     }
-    case JMP: {
+    case OP_GOTO: {
       int cond = pop();
       if(cond){
 	switch(args[1]){
@@ -156,7 +160,7 @@ int run(int *program){
       }
       break;
     }
-    case CALL: {
+    case _OPC_CALL: {
       push(pc);
       pc = inst.args[0];
       pc--;
@@ -167,7 +171,7 @@ int run(int *program){
       pc--;
       break;
     }
-    case EXIT: {
+    case OP_EXIT: {
       goto exit;
     }
     default: {
