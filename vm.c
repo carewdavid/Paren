@@ -102,12 +102,13 @@ int run(int *program){
       break;
     }
     case OP_READ: {
-      if(inst.args[0] == 1){
-	int chr = getchar();
-      }
+      int c = getchar();
+      push(c);
       break;
     }
-    case OP_WRITE:{}
+    case OP_WRITE:{
+      putchar(pop());
+    }
 
     case OP_DUP: {
       int temp = pop();
