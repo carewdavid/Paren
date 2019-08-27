@@ -20,8 +20,8 @@ static void push(int data){
 }
 
 static int pop(){
-  int ret = stack.data[stack.top];
   stack.top--;
+  int ret = stack.data[stack.top];
   return ret;
 }
 
