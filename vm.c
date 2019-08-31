@@ -40,12 +40,14 @@ int run(int *program){
     int right = pop(); \
     push(left op right); \
   } while(0);
+#define NEXT() (program[pc++])
 
   while(program[pc] != -1){
-    struct instruction inst = program[pc];
-    switch(inst.opcode){
-    case PUSH: {
-      push(inst.args[0]);
+    //dump_stack();
+    int inst = NEXT();
+    switch(inst){
+    case OP_PUSH: {
+      push(NEXT());
       break;
     }
     case OP_ADD: {
@@ -128,43 +130,30 @@ int run(int *program){
       break;
     }
     case OP_GOTO: {
+      int dest = pop();
       int cond = pop();
       if(cond){
-	switch(args[1]){
-	case 0:
-	  pc = args[0];
-	  break;
-	case 1: 
-	  pc += args[0];
-	  break;
-	case 2:
-	  pc -= args[0];
-	  break;
-	default:
-	  //error
-	}
+        pc = dest;
       }
       break;
     }
-    case _OPC_CALL: {
+    case OP_CALL: {
+      int target = pop();
       push(pc);
-      pc = inst.args[0];
-      pc--;
+      pc = target;
       break;
     }
-    case RET: {
+    case OP_RET: {
       pc = pop();
-      pc--;
       break;
     }
     case OP_EXIT: {
       goto exit;
     }
     default: {
-      fprintf(stderr, "Unknown opcode %x.\n", inst.opcode);
+      fprintf(stderr, "Unknown opcode %x.\n", inst);
       return 1;
     }
-      pc++;
     }
   }
  exit:
