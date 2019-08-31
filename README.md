@@ -5,6 +5,7 @@ Paren is an esoteric programming language whose syntax consists entirely of pair
 
 ## Syntax
 
+
 A Paren program is a series of instructions each contained within a pair of parentheses.  Each instruction represents an opcode number.
 
 Numbers are written by nesting parentheses. 0 is `()`, 1 is `(())`. For convenience, documentation will use the notation `(x)` as a shorthand.

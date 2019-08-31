@@ -1,4 +1,5 @@
 typedef enum {
+      OP_EXIT,
       OP_PUSH,
       OP_ADD,
       OP_SUB,
@@ -14,5 +15,5 @@ typedef enum {
       OP_DROP,
       OP_GOTO,
       OP_CALL,
-      OP_EXIT
+      OP_RET
 } OpCode;

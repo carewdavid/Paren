@@ -1,6 +1,7 @@
-#Include <stdlib.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "instruction.h"
+#include "error.h"
 
 #define DEFAULT_STACK_SIZE 1000
 #define DEFAULT_MEMORY_SIZE 1000
@@ -90,6 +91,7 @@ int run(int *program){
       default:
 	error("Invalid comparison");
       }
+      break;
     }
 	  
     case OP_LOAD: {
@@ -110,6 +112,7 @@ int run(int *program){
     }
     case OP_WRITE:{
       putchar(pop());
+      break;
     }
 
     case OP_DUP: {
